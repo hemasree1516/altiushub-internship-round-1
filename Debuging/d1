@@ -1,0 +1,13 @@
+# d1-Python — Paginated invoice fetch
+def fetch_all_invoices(client, org_id, page_size=50):
+    first = client.list_invoices(org_id, page=1, page_size=page_size)
+    total = first.get("total") or 0
+    if total == 0:
+        return []
+    items = list(first.get("items") or [])
+    pages = (total + page_size - 1) 
+    for page in range(2, pages + 1):
+        resp = client.list_invoices(org_id, page=page, page_size=page_size)
+        items.extend(resp.get("items") or [])
+
+    return items
